@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     [SerializeField] float _baseSpeed;
     [SerializeField] float _sprintSpeedModifier;
     [SerializeField] private Rigidbody2D _rb;
+    [SerializeField] private Animator _animator;
     
     [SerializeField] float _maxHealth = 100;
     [SerializeField] float _healthRegenerationCooldown;
@@ -26,6 +27,8 @@ public class Player : MonoBehaviour
     private float _currentHealth;
     private float _currentStamina;
     private bool _canRegen;
+    private static readonly int IsMoving = Animator.StringToHash("isMoving");
+    private static readonly int Speed = Animator.StringToHash("speed");
 
     public void TakeDamage(float damage)
     {
@@ -73,6 +76,15 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             
+        }
+        _animator.SetFloat(Speed, _moveSpeed);
+        if (_movementInput.x != 0 || _movementInput.y != 0)
+        {
+            _animator.SetBool(IsMoving, true);
+        }
+        else
+        {
+            _animator.SetBool(IsMoving, false);
         }
     }
     private void FixedUpdate()

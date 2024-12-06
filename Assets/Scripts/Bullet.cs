@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
@@ -6,8 +7,9 @@ public class Bullet : MonoBehaviour
     public int damage = 20;
     public AudioClip hitSound;
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
+        
         if (collision.gameObject.CompareTag("Enemy"))
         {
             EnemyHealth enemyHealth = collision.gameObject.GetComponent<EnemyHealth>();
@@ -25,10 +27,10 @@ public class Bullet : MonoBehaviour
                     ScoreManager.instance.AddScore(10);
                 }
 
-                AudioSource.PlayClipAtPoint(hitSound, transform.position);
+                // AudioSource.PlayClipAtPoint(hitSound, transform.position);
             }
         }
 
-        Destroy(gameObject); 
+        gameObject.SetActive(false);
     }
 }
