@@ -1,25 +1,53 @@
+using System;
 using UnityEngine;
+using UnityEngine.Pool;
+using Random = UnityEngine.Random;
 
-public class SpawnerControroller
+public class SpawnerControroller : MonoBehaviour
 {
-    public GameObject zombiePrefab; 
+    public ZombieController zombiePrefab; 
     public int maxZombies = 5;  
     public Vector2 spawnCooldownRange = new Vector2(6, 10); 
-    private int zombiesSpawned = 0;
+    public int zombiesSpawned = 0;
+    private IObjectPool<ZombieController> _zombiePool;
 
-    public void SpawnZombies()
+    private void Awake()
     {
-        if (zombiesSpawned < maxZombies)
-        {
-            float cooldown = Random.Range(spawnCooldownRange.x, spawnCooldownRange.y);
-            Invoke(nameof(Spawn), cooldown);
-        }
+        _zombiePool = new ObjectPool<ZombieController>(
+            () => Instantiate(zombiePrefab),
+            (x) => x.gameObject.SetActive(true),
+            (x) => x.gameObject.SetActive(false),
+            (x) => Destroy(x));
     }
 
-    private void Spawn()
+    // public void SpawnZombies()
+    // {
+    //     if (zombiesSpawned < maxZombies)
+    //     {
+    //         float cooldown = Random.Range(spawnCooldownRange.x, spawnCooldownRange.y);
+    //         Invoke(nameof(Spawn), cooldown);
+    //     }
+    // }
+
+    public void ResetSpawner()
     {
-        Instantiate(zombiePrefab, transform.position, Quaternion.identity);
+        zombiesSpawned = 0;
+        maxZombies = 0;
+    }
+
+    public void Spawn(ZombieModifier zombieModifier)
+    {
         zombiesSpawned++;
-        SpawnZombies();
+        var zombie = _zombiePool.Get();
+        zombie.transform.position = transform.position;
+        zombie.transform.rotation = Quaternion.identity;
+        zombie.currentHealth = zombie.maxHealth;
+        zombie.Spawn(zombieModifier);
+        zombie.OnZombieDead += () =>
+        {
+            _zombiePool.Release(zombie);
+            WaveManager2.Instance.OnZombieDead(zombie);
+            zombie.OnZombieDead = null;
+        };
     }
 }

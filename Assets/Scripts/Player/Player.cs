@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,7 +9,8 @@ public class Player : MonoBehaviour
 
     public event Action OnPlayerDeath;
     public event Action<float> OnPlayerTakeDamage; 
-    public event Action<float> OnPlayerHeal; 
+    public event Action<float> OnPlayerHeal;
+    [SerializeField] private TMP_Text _health;
     
     [SerializeField] float _baseSpeed;
     [SerializeField] float _sprintSpeedModifier;
@@ -29,30 +31,40 @@ public class Player : MonoBehaviour
     private bool _canRegen;
     private static readonly int IsMoving = Animator.StringToHash("isMoving");
     private static readonly int Speed = Animator.StringToHash("speed");
+    public static Player Instance;
+    private Coroutine _healCoroutine;
 
     public void TakeDamage(float damage)
     {
         _currentHealth = Mathf.Clamp(_currentHealth - damage, 0, _maxHealth);
         _canRegen = false;
-        StartCoroutine(HealthCooldown());
+        if (_healCoroutine != null)
+        {
+            StopCoroutine(_healCoroutine);
+        }
+        _healCoroutine = StartCoroutine(HealthCooldown());
         OnPlayerTakeDamage?.Invoke(_currentHealth);
         if (_currentHealth <= 0)
         {
             OnPlayerDeath?.Invoke();
         }
+        _health.text = $"Health: {_currentHealth}";
+
     }
     public void Heal(float health)
     {
         _currentHealth = Mathf.Clamp(_currentHealth + health, 0, _maxHealth);
         OnPlayerHeal?.Invoke(_currentHealth);
+        _health.text = $"Health: {_currentHealth}";
     }
     private void Awake()
     {
-        
+        Instance = this;
     }
     private void Start()
     {
-        
+        _currentHealth = _maxHealth;
+        Heal(0);
     }
     void Update()
     {

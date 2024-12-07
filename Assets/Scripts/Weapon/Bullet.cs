@@ -6,19 +6,19 @@ public class Bullet : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public int damage = 20;
     public AudioClip hitSound;
+    public event Action OnBulletHit;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.TryGetComponent(out ZombieController zombieController))
         {
-            EnemyHealth enemyHealth = collision.gameObject.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
+            if (zombieController != null)
             {
-                enemyHealth.TakeDamage(damage);
+                zombieController.TakeDamage(damage);
 
                 //لو العدو مات ضيف نقاط الموت
-                if (enemyHealth.IsDead())
+                if (zombieController.currentHealth <= 0)
                 {
                     ScoreManager.instance.AddScore(60);
                 }
@@ -26,11 +26,13 @@ public class Bullet : MonoBehaviour
                 {
                     ScoreManager.instance.AddScore(10);
                 }
+                gameObject.SetActive(false);
+                OnBulletHit?.Invoke();
+                OnBulletHit = null;
 
                 // AudioSource.PlayClipAtPoint(hitSound, transform.position);
             }
         }
 
-        gameObject.SetActive(false);
     }
 }

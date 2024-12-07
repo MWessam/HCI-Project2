@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -25,7 +26,7 @@ public class GunController : MonoBehaviour
 
     private static readonly int IsShooting = Animator.StringToHash("isShooting");
     [SerializeField] private ParticleSystem _particles;
-
+    [SerializeField] private TMP_Text _ammoText;
     private void Awake()
     {
         _bulletPool = new ObjectPool<Bullet>(
@@ -40,6 +41,7 @@ public class GunController : MonoBehaviour
     void Start()
     {
         currentAmmo = maxAmmo; // بدء الذخيرة
+        _ammoText.text = $"Ammo: {currentAmmo}";
         _audioSource = GetComponent<AudioSource>();
     }
 
@@ -55,6 +57,7 @@ public class GunController : MonoBehaviour
     {
         nextFireTime = Time.time + fireRate;
         currentAmmo--;
+        _ammoText.text = $"Ammo: {currentAmmo}";
 
         var bullet = _bulletPool.Get();
         var rb = bullet.GetComponent<Rigidbody2D>();
@@ -62,6 +65,7 @@ public class GunController : MonoBehaviour
         bullet.transform.position = firePoint.position;
         bullet.transform.rotation = Quaternion.identity;
         rb.linearVelocity = firePoint.right * bulletSpeed;
+        bullet.OnBulletHit += OnBulletHit(bullet);
 
         _audioSource.clip = fireSound;
         _audioSource.Play();
@@ -73,12 +77,20 @@ public class GunController : MonoBehaviour
     private IEnumerator BulletTimer(Bullet bullet)
     {
         yield return new WaitForSeconds(3.0f);
+        bullet.OnBulletHit -= OnBulletHit(bullet);
         _bulletPool.Release(bullet);
+    }
+
+    private Action OnBulletHit(Bullet bullet)
+    {
+        return () => {};
     }
 
     public void Reload(int ammo)
     {
         currentAmmo = Mathf.Min(currentAmmo + ammo, maxAmmo);
+        _ammoText.text = $"Ammo: {currentAmmo}";
+
     }
 
 }

@@ -2420,6 +2420,7 @@ GameObject:
   - component: {fileID: 4577607003106963}
   - component: {fileID: 50173670154796657}
   - component: {fileID: 58029601952981101}
+  - component: {fileID: 8985125524972231491}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -2457,7 +2458,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1281581873126441}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -2512,6 +2513,29 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.022205781}
   m_Radius: 0.16183071
+--- !u!114 &8985125524972231491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1281581873126441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bd33a01d702fe74fbb229b6dd15efb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  speed: 2
+  attackRange: 1.5
+  attackCooldown: 2
+  hitParticles: {fileID: 1924768505372359}
+  killParticles: {fileID: 1902299056677623}
+  hitSound: {fileID: 0}
+  damagedSound: {fileID: 0}
+  killedSound: {fileID: 0}
+  _animator: {fileID: 95080889673879618}
 --- !u!1 &1442868311932234
 GameObject:
   m_ObjectHideFlags: 0
