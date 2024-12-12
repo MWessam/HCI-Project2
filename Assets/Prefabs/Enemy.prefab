@@ -2528,8 +2528,11 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   speed: 2
+  baseSpeed: 2
+  baseHealth: 100
   attackRange: 1.5
   attackCooldown: 2
+  AmmoBoxPrefab: {fileID: 1525560989322013507, guid: 86dbac75127c13d4491399e2b3cbe4ab, type: 3}
   hitParticles: {fileID: 1924768505372359}
   killParticles: {fileID: 1902299056677623}
   hitSound: {fileID: 0}

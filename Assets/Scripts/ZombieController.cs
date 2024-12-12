@@ -10,7 +10,8 @@ public class ZombieController : MonoBehaviour
     public float baseSpeed = 2f;
     public float baseHealth;
     public float attackRange = 1.5f; 
-    public float attackCooldown = 2f; 
+    public float attackCooldown = 2f;
+    public AmmoBox AmmoBoxPrefab;
     public GameObject hitParticles;
     public GameObject killParticles; 
     public AudioClip hitSound, damagedSound, killedSound;
@@ -33,7 +34,6 @@ public class ZombieController : MonoBehaviour
 
     public void Spawn(ZombieModifier modifier)
     {
-        
         speed = baseSpeed * modifier.SpeedModifier;
         maxHealth = baseHealth * modifier.HealthModifier;
         if (speed > 5)
@@ -49,6 +49,11 @@ public class ZombieController : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            if (Random.Range(1, 11) % 10 == 0)
+            {
+                var ammoBox = Instantiate(AmmoBoxPrefab, transform.position, Quaternion.identity);
+                ammoBox.ammoAmount = Random.Range(30, 100);
+            }
             OnZombieDead?.Invoke();
         }
     }
